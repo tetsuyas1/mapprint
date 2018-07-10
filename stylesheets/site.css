@@ -19,10 +19,14 @@ a {
 
 #list {
   text-align: left;
-  width: 100%; }
+  width: 100vw; }
   #list table {
-    width: 100%; }
-    #list table .id {
-      width: 10%; }
-    #list table .value {
-      width: 50%; }
+    width: 100vw; }
+  #list td {
+    border-collapse: collapse;
+    border: 1px solid #333;
+    padding: 2px; }
+  #list td.id {
+    width: 5vw; }
+  #list td.value {
+    width: 45vw; }
