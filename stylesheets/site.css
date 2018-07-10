@@ -20,7 +20,9 @@ a {
 #list {
   text-align: left;
   width: 100%; }
-  #list .id {
-    width: 10%; }
-  #list .value {
-    width: 50%; }
+  #list table {
+    width: 100%; }
+    #list table .id {
+      width: 10%; }
+    #list table .value {
+      width: 50%; }
