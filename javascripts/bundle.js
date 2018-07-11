@@ -24192,6 +24192,9 @@ $(function(){
           maxZoom: 18
         }
     ).addTo( map );
+    $('#close').on('click', function(){
+        $('#explain').hide()
+    });
 
     $.getJSON('./images/water-supply.geojson', function (data) {
         var geojson = L.geoJson(data, {
