@@ -26505,16 +26505,23 @@ $(function(){
         shadowSize: [68, 95],
         shadowAnchor: [22, 94]
     });
-
+    // MIERUNEMAPのAPIキーはローカル環境では表示されないのでご注意(https://codeforjapan.github.io/mapprint/　でのみ表示される）
     var map = L.map('map').setView([41.3921, 2.1705], 13);
     L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: 'Map data © <a href="http://openstreetmap.org/">OpenStreetMap</a>',
+        'https://tile.cdn.mierune.co.jp/styles/normal/{z}/{x}/{y}.png?key=0Y_ktb4DaMAm1ULxQudU4cFMQ5zx_Q1-PGF7DXf07WLwf5F2OpY6cr8OvJSqmQbIwTl61KCMi5Uc-GwruiSicdPyutwtvyZ_wuCEHO3GoQgrMd4k', {
+          attribution: "Maptiles by <a href='http://mierune.co.jp/' target='_blank'>MIERUNE</a>, under CC BY. Data by <a href='http://osm.org/copyright' target='_blank'>OpenStreetMap</a> contributors, under ODbL.",
           maxZoom: 18
         }
     ).addTo( map );
+
+    // 説明の表示/非表示
     $('#close').on('click', function(){
-        $('#explain').hide()
+        $('.explain-container').toggle()
+        if ($('#close').text() == '閉じる') {
+          $('#close').text('開く')
+        } else {
+          $('#close').text('閉じる')
+        }
     });
 
     $.ajax('./images/water-supply.kml').done(function (data) {
@@ -26526,7 +26533,7 @@ $(function(){
           onEachFeature: function (feature, layer) {
             var field = '名称: '+feature.properties.name+ '<br>'+
             '詳細: '+feature.properties.description;
-    
+
             layer.bindPopup(field);
           }
         });
@@ -26567,7 +26574,7 @@ $(function(){
                                 marker = 'darkpuple';
                             }
                             layer.setIcon(new L.AwesomeNumberMarkers({
-                                number: index + 1, 
+                                number: index + 1,
                                 markerColor: marker
                             }));
                             //$('#list').append('<tr><td class="id">' + (index + 1) + '</td><td class="value">' + name + '</td><td class="description">' + description + '</td></tr>')
@@ -26577,7 +26584,7 @@ $(function(){
 				    //that._list.appendChild( that._createItem(layer) );
         });
         $('#list').append('</table>');
-    });      
+    });
 });
 
 },{"./leaflet_awesome_number_markers":8,"./togeojson":9,"jquery":1,"leaflet":2}],8:[function(require,module,exports){
