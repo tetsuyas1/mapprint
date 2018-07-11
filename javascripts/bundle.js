@@ -26572,38 +26572,56 @@ $(function(){
                     }
 				    //that._list.appendChild( that._createItem(layer) );
         });
+        // アイコンの設定 https://codeforjapan.github.io/mapprint/stylesheets/leaflet_awesome_number_markers.css 内の色を使う。
+        var colors = {
+            'その他':'beige',
+            'プール':'darkpuple',
+            '井戸':'purple',
+            '水道水':'cadetblue',
+            '洗濯':'green',
+            '風呂':'red',
+            'シャワー':'orange',
+            '給水':'green'
+        };
+        // sort targets
+        var matchtexts =  Object.keys(colors);
         var res = targets.sort(function(a,b){
             var _a = a.feature.properties.name;
             var _b = b.feature.properties.name;
-            if(_a < _b){
+            var _a = matchtexts.indexOf(_a.split('｜')[0]);
+            var _b = matchtexts.indexOf(_b.split('｜')[0]);
+            if(_a > _b){
                 return -1;
-            }else if(_a > _b){
+            }else if(_a < _b){
                 return 1;
             }
             return 0;
         });
-        console.log(res);
+        // display them
+        var lastCategory = "";
         res.forEach(function(layer,index){
+            // get name
             var name = layer.feature.properties.name;
-            if (index % 2 == 0){
+            // get category and marker type
+            var category = name.split('｜')[0];
+            if (matchtexts.indexOf(category) == -1)
+                category = 'その他';
+            var marker = colors[name.split('｜')[0]];
+            if (marker == undefined)
+                marker = colors['その他'];
+
+            if (category != lastCategory){
+                // display categories
+                $('#list table').append('<tr><th colspan="2" class="category"><icon class="awesome-number-marker awesome-number-marker-icon-' + marker + '"></icon>' + category + '</th></tr>');
+                lastCategory = category;
                 $('#list table').append('<tr>');
+            }else{
+                if (index % 2 == 0){
+                    $('#list table').append('<tr>');
+                }
             }
-            $('#list table tr:last').append('<td class="id">' + (index + 1) + '</td><td class="value">' + name + '</td>')
-            if (index % 2 == 1){
-                $('#list').append('</tr>');
-            }
-            var marker = 'blue';
-            if (name.match(/^風呂/)) {
-                marker = 'red';
-            } else if (name.match(/^シャワー/) ) {
-                marker = 'orange';
-            } else if (name.match(/^洗濯/)) {
-                marker = 'green';
-            } else if (name.match(/^井戸/)) {
-                marker = 'purple';
-            } else if (name.match(/^プール/)) {
-                marker = 'darkpuple';
-            }
+            $('#list table tr:last').append('<td class="id">' + (index + 1) + '</td><td class="value">' + name + '</td>');
+            // add markers to map
             layer.setIcon(new L.AwesomeNumberMarkers({
                 number: index + 1,
                 markerColor: marker
