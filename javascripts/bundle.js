@@ -26541,11 +26541,8 @@ $(function(){
     $.ajax('./images/water-supply.kml').done(function (data, textStatus, jqXHR) {
         // データの最終更新日を表示（ローカルでは常に現在時刻となる）
         var date = getNowYMD(new Date(jqXHR.getResponseHeader('date')));
-        console.log(date);
         $('#datetime').html(date.toString());
-        console.log(data);
         var geojsondata = tj.kml(data);
-        console.log(geojsondata)
 
         var geojson = L.geoJson(geojsondata, {
           onEachFeature: function (feature, layer) {
@@ -26561,7 +26558,7 @@ $(function(){
     map.on("moveend", function () {
         $('#list').html('<table>');
         var index = 0;
-        console.log(map.getCenter().toString());
+        var targets = [];
         this.eachLayer(function(layer) {
 			if(layer instanceof L.Marker)
                 if( map.getBounds().contains(layer.getLatLng()) )
@@ -26569,39 +26566,50 @@ $(function(){
                         return false;
                     }else {
                         var name = layer.feature.properties.name;
-                        var description = layer.feature.properties.description;
                         if (name !== undefined) {
-                            console.log(layer.feature.properties);
-                            if (index % 2 == 0){
-                                $('#list table').append('<tr>');
-                            }
-                            $('#list table tr:last').append('<td class="id">' + (index + 1) + '</td><td class="value">' + name + '</td>')
-                            if (index % 2 == 1){
-                                $('#list').append('</tr>');
-                            }
-                            var marker = 'blue';
-                            if (name.match(/^風呂/)) {
-                                marker = 'red';
-                            } else if (name.match(/^シャワー/) ) {
-                                marker = 'orange';
-                            } else if (name.match(/^洗濯/)) {
-                                marker = 'green';
-                            } else if (name.match(/^井戸/)) {
-                                marker = 'purple';
-                            } else if (name.match(/^プール/)) {
-                                marker = 'darkpuple';
-                            }
-                            layer.setIcon(new L.AwesomeNumberMarkers({
-                                number: index + 1,
-                                markerColor: marker
-                            }));
-                            //$('#list').append('<tr><td class="id">' + (index + 1) + '</td><td class="value">' + name + '</td><td class="description">' + description + '</td></tr>')
-                            index += 1;
+                            targets.push(layer);
                         }
                     }
 				    //that._list.appendChild( that._createItem(layer) );
         });
-        $('#list').append('</table>');
+        var res = targets.sort(function(a,b){
+            var _a = a.feature.properties.name;
+            var _b = b.feature.properties.name;
+            if(_a < _b){
+                return -1;
+            }else if(_a > _b){
+                return 1;
+            }
+            return 0;
+        });
+        console.log(res);
+        res.forEach(function(layer,index){
+            var name = layer.feature.properties.name;
+            if (index % 2 == 0){
+                $('#list table').append('<tr>');
+            }
+            $('#list table tr:last').append('<td class="id">' + (index + 1) + '</td><td class="value">' + name + '</td>')
+            if (index % 2 == 1){
+                $('#list').append('</tr>');
+            }
+            var marker = 'blue';
+            if (name.match(/^風呂/)) {
+                marker = 'red';
+            } else if (name.match(/^シャワー/) ) {
+                marker = 'orange';
+            } else if (name.match(/^洗濯/)) {
+                marker = 'green';
+            } else if (name.match(/^井戸/)) {
+                marker = 'purple';
+            } else if (name.match(/^プール/)) {
+                marker = 'darkpuple';
+            }
+            layer.setIcon(new L.AwesomeNumberMarkers({
+                number: index + 1,
+                markerColor: marker
+            }));
+            //$('#list').append('<tr><td class="id">' + (index + 1) + '</td><td class="value">' + name + '</td><td class="description">' + description + '</td></tr>')
+        });
     });
 });
 
