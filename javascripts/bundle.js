@@ -26494,17 +26494,8 @@ var L = require('leaflet');
 var $ = require('jquery');
 var tj = require('./togeojson');
 var numberIcon = require('./leaflet_awesome_number_markers');
+var displayHelper = require('./displayHelper');
 
-var getNowYMD = function(dt){
-    var y = dt.getFullYear();
-    var m = ("00" + (dt.getMonth()+1)).slice(-2);
-    var d = ("00" + dt.getDate()).slice(-2);
-    var hh = ("00" + dt.getHours()).slice(-2);
-    var mm =  ("00" + dt.getMinutes()).slice(-2);
-    var result = y + "年" + m + "月" + d + "日" + hh + "時" + mm + "分";
-    return result;
-  };
-  
 $(function(){
     // MIERUNEMAPのAPIキーはローカル環境では表示されないのでご注意(https://codeforjapan.github.io/mapprint/　でのみ表示される）
     // サーバ上の場合のみMIERUNE地図を使う
@@ -26525,7 +26516,7 @@ $(function(){
 
     $('#date').text(() => {
       const d = new Date()
-      return `このマップは ${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日 ${d.getHours()}:${d.getMinutes()} に印刷しました。`;
+      return displayHelper.getPrintDate(d);
     });
 
     // 説明の表示/非表示
@@ -26540,7 +26531,8 @@ $(function(){
 
     $.ajax('./images/water-supply.kml').done(function (data, textStatus, jqXHR) {
         // データの最終更新日を表示（ローカルでは常に現在時刻となる）
-        var date = getNowYMD(new Date(jqXHR.getResponseHeader('date')));
+        var date = displayHelper.getNowYMD(new Date(jqXHR.getResponseHeader('date')));
+        console.log(date);
         $('#datetime').html(date.toString());
         var geojsondata = tj.kml(data);
 
@@ -26631,7 +26623,25 @@ $(function(){
     });
 });
 
-},{"./leaflet_awesome_number_markers":8,"./togeojson":9,"jquery":1,"leaflet":2}],8:[function(require,module,exports){
+},{"./displayHelper":8,"./leaflet_awesome_number_markers":9,"./togeojson":10,"jquery":1,"leaflet":2}],8:[function(require,module,exports){
+
+module.exports = {
+  getNowYMD: function(dt){
+    var y = dt.getFullYear();
+    var m = ("00" + (dt.getMonth()+1)).slice(-2);
+    var d = ("00" + dt.getDate()).slice(-2);
+    var hh = ("00" + dt.getHours()).slice(-2);
+    var mm =  ("00" + dt.getMinutes()).slice(-2);
+    var result = y + "年" + m + "月" + d + "日" + hh + "時" + mm + "分";
+    return result;
+  },
+
+  getPrintDate: function(dt){
+    return `このマップは ${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日 ${dt.getHours()}:${dt.getMinutes()} に印刷しました。`;
+  }
+}
+
+},{}],9:[function(require,module,exports){
 /*
   Leaflet.AwesomeNumberMarkers, a plugin that adds number markers for Leaflet
 
@@ -26698,7 +26708,7 @@ $(function(){
 }());
 
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 (function (process){
 var toGeoJSON = (function() {
     'use strict';
