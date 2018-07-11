@@ -46,7 +46,8 @@ body {
       text-align: left;
       width: 100%; }
       #content #page #list table {
-        width: 100%; }
+        width: 100%;
+        border-spacing: 0; }
       #content #page #list td {
         border-collapse: collapse;
         border: 1px solid #333;
