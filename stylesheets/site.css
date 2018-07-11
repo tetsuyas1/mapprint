@@ -47,24 +47,20 @@ body {
       width: 100%; }
       #content #page #list table {
         width: 100%; }
-      #content #page #list td {
-        border-collapse: collapse;
-        border-spacing: 0;
-        border: 1px solid #333;
-        padding: 2px; }
-        #content #page #list td th.category {
+        #content #page #list table th.category {
           position: relative;
           height: 44px;
           vertical-align: bottom;
           padding-left: 32px; }
-        #content #page #list td td {
+        #content #page #list table td {
           border-collapse: collapse;
+          border-spacing: 0;
           border: 1px solid #333;
           padding: 2px; }
-        #content #page #list td.id {
-          width: 5%; }
-        #content #page #list td.value {
-          width: 45%; }
+          #content #page #list table td.id {
+            width: 5%; }
+          #content #page #list table td.value {
+            width: 45%; }
   @media print {
     #content #page #date {
       display: block; }
