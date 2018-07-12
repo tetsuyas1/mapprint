@@ -41902,24 +41902,25 @@ var tj = require('@mapbox/togeojson');
 require('./leaflet_awesome_number_markers').default();
 var displayHelper = require('./displayHelper');
 var _ = require('lodash');
+var colors = [
+    { name: 'その他', color: 'black' },
+    { name: 'プール', color: 'lightgreen' },
+    { name: '井戸', color: 'purple' },
+    { name: '水道水', color: 'cadetblue' },
+    { name: '洗濯', color: 'green' },
+    { name: '風呂', color: 'red' },
+    { name: 'シャワー', color: 'orange' },
+    { name: '給水', color: 'green' },
+    { name: 'トイレ', color: 'lightblue' },
+];
 function showLegend(map) {
     var legend = L.control({ position: 'bottomright' });
     legend.onAdd = function () {
-        var div = L.DomUtil.create('div', 'legend'), grades = [
-            { name: 'その他', color: 'black' },
-            { name: 'プール', color: '#563c5c' },
-            { name: '井戸', color: 'purple' },
-            { name: '水道水', color: 'cadetblue' },
-            { name: '洗濯', color: 'green' },
-            { name: '風呂', color: 'red' },
-            { name: 'シャワー', color: 'orange' },
-            { name: '給水', color: 'green' },
-            { name: 'トイレ', color: '#addbe6' },
-        ], labels = [];
-        for (var i = 0; i < grades.length; i++) {
+        var div = L.DomUtil.create('div', 'legend');
+        for (var i = 0; i < colors.length; i++) {
             div.innerHTML +=
                 '<div class="legend-type">' +
-                    '<i style="background:' + grades[i].color + '"></i><div class=poi-type> ' + grades[i].name + '</div></br>' +
+                    '<i style="background:' + colors[i].color + '"></i><div class=poi-type> ' + colors[i].name + '</div></br>' +
                     '</div>';
         }
         return div;
@@ -41934,6 +41935,19 @@ $(function () {
     var attribution = (location.host == 'codeforjapan.github.io') ?
         "Maptiles by <a href='http://mierune.co.jp/' target='_blank'>MIERUNE</a>, under CC BY. Data by <a href='http://osm.org/copyright' target='_blank'>OpenStreetMap</a> contributors, under ODbL." :
         'Map data © <a href="http://openstreetmap.org/">OpenStreetMap</a>';
+    function serializeLatLng(latLng) {
+        return '' + latLng.lat + ',' + latLng.lng;
+    }
+    function serializeBounds(bounds) {
+        return serializeLatLng(bounds.getNorthWest()) + '-' +
+            serializeLatLng(bounds.getSouthEast());
+    }
+    function deserializeLatLng(s) {
+        return L.latLng(s.split(',', 2).map(function (d) { return +d; }));
+    }
+    function deserializeBounds(s) {
+        return L.latLngBounds(s.split('-', 2).map(function (d) { return deserializeLatLng(d); }));
+    }
     var map = L.map('map').setView([41.3921, 2.1705], 13);
     L.tileLayer(tileserver, {
         attribution: attribution,
@@ -41968,10 +41982,21 @@ $(function () {
             }
         });
         geojson.addTo(map);
-        map.fitBounds(geojson.getBounds());
+        try {
+            var bounds = deserializeBounds(window.location.hash.substr(1));
+            map.fitBounds(bounds);
+        }
+        catch (e) {
+            map.fitBounds(geojson.getBounds());
+        }
+        ;
         showLegend(map);
     });
     map.on("moveend", function () {
+        var bounds = map.getBounds();
+        var s = serializeBounds(bounds);
+        var path = location.pathname;
+        window.history.pushState('', '', path + '#' + s);
         $('#list').html('<table>');
         var index = 0;
         var targets = [];
@@ -41988,18 +42013,9 @@ $(function () {
                         }
                     }
         });
-        var colors = {
-            'その他': 'black',
-            'プール': 'darkpurple',
-            '井戸': 'purple',
-            '水道水': 'cadetblue',
-            '洗濯': 'green',
-            '風呂': 'red',
-            'シャワー': 'orange',
-            '給水': 'green',
-            'トイレ': 'lightblue',
-        };
-        var matchtexts = Object.keys(colors);
+        var matchtexts = _.map(colors, function (c) {
+            return c.name;
+        });
         var res = targets.sort(function (a, b) {
             var _a = a.feature.properties.name;
             var _b = b.feature.properties.name;
@@ -42020,9 +42036,11 @@ $(function () {
             var category = name.split('｜')[0];
             if (matchtexts.indexOf(category) == -1)
                 category = 'その他';
-            var marker = colors[name.split('｜')[0]];
-            if (_.isUndefined(marker))
-                marker = colors['その他'];
+            var c = _.find(colors, { 'name': name.split('｜')[0] });
+            if (_.isUndefined(c)) {
+                c = _.find(colors, { 'name': 'その他' });
+            }
+            var marker = c.color;
             if (category != lastCategory) {
                 $('#list table').append('<tr><th colspan="2" class="category_separator"></th></tr>');
                 lastCategory = category;
@@ -42045,18 +42063,19 @@ $(function () {
 
 },{"./displayHelper":8,"./leaflet_awesome_number_markers":9,"@mapbox/togeojson":1,"jquery":3,"leaflet":4,"lodash":5}],8:[function(require,module,exports){
 "use strict";
+var getNowYMD = function (dt) {
+    var y = dt.getFullYear();
+    var m = ("00" + (dt.getMonth() + 1)).slice(-2);
+    var d = ("00" + dt.getDate()).slice(-2);
+    var hh = ("00" + dt.getHours()).slice(-2);
+    var mm = ("00" + dt.getMinutes()).slice(-2);
+    var result = y + "年" + m + "月" + d + "日" + hh + "時" + mm + "分";
+    return result;
+};
 module.exports = {
-    getNowYMD: function (dt) {
-        var y = dt.getFullYear();
-        var m = ("00" + (dt.getMonth() + 1)).slice(-2);
-        var d = ("00" + dt.getDate()).slice(-2);
-        var hh = ("00" + dt.getHours()).slice(-2);
-        var mm = ("00" + dt.getMinutes()).slice(-2);
-        var result = y + "年" + m + "月" + d + "日" + hh + "時" + mm + "分";
-        return result;
-    },
+    getNowYMD: getNowYMD,
     getPrintDate: function (dt) {
-        return "\u3053\u306E\u30DE\u30C3\u30D7\u306F " + dt.getFullYear() + "\u5E74" + (dt.getMonth() + 1) + "\u6708" + dt.getDate() + "\u65E5 " + dt.getHours() + ":" + dt.getMinutes() + " \u306B\u5370\u5237\u3057\u307E\u3057\u305F\u3002";
+        return "\u3053\u306E\u30DE\u30C3\u30D7\u306F " + getNowYMD(dt) + " \u306B\u5370\u5237\u3057\u307E\u3057\u305F\u3002";
     }
 };
 
