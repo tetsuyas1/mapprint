@@ -41914,6 +41914,7 @@ function showLegend(map) {
             { name: '風呂', color: 'red' },
             { name: 'シャワー', color: 'orange' },
             { name: '給水', color: 'green' },
+            { name: 'トイレ', color: 'yellow' },
         ], labels = [];
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
@@ -41942,6 +41943,9 @@ $(function () {
         var d = new Date();
         return displayHelper.getPrintDate(d);
     });
+    $('#footer').append('この地図は、https://codeforjapan.github.io/mapprint/ を印刷したものです。'
+        + '<br>'
+        + '最新の情報はウェブサイトからお確かめください。');
     $('#close').on('click', function () {
         $('.explain-container').toggle();
         if ($('#close').text() == '閉じる') {
@@ -41992,7 +41996,8 @@ $(function () {
             '洗濯': 'green',
             '風呂': 'red',
             'シャワー': 'orange',
-            '給水': 'green'
+            '給水': 'green',
+            'トイレ': 'yellow',
         };
         var matchtexts = Object.keys(colors);
         var res = targets.sort(function (a, b) {
