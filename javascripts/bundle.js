@@ -42014,6 +42014,7 @@ $(function () {
             return 0;
         });
         var lastCategory = "";
+        var categoryIndex = 0;
         res.forEach(function (layer, index) {
             var name = layer.feature.properties.name;
             var category = name.split('｜')[0];
@@ -42026,9 +42027,10 @@ $(function () {
                 $('#list table').append('<tr><th colspan="2" class="category_separator"></th></tr>');
                 lastCategory = category;
                 $('#list table').append('<tr>');
+                categoryIndex = index;
             }
             else {
-                if (index % 2 == 0) {
+                if ((index - categoryIndex) % 2 == 0) {
                     $('#list table').append('<tr>');
                 }
             }
