@@ -41914,7 +41914,7 @@ function showLegend(map) {
             { name: '風呂', color: 'red' },
             { name: 'シャワー', color: 'orange' },
             { name: '給水', color: 'green' },
-            { name: 'トイレ', color: 'yellow' },
+            { name: 'トイレ', color: '#addbe6' },
         ], labels = [];
         for (var i = 0; i < grades.length; i++) {
             div.innerHTML +=
@@ -41997,7 +41997,7 @@ $(function () {
             '風呂': 'red',
             'シャワー': 'orange',
             '給水': 'green',
-            'トイレ': 'yellow',
+            'トイレ': 'lightblue',
         };
         var matchtexts = Object.keys(colors);
         var res = targets.sort(function (a, b) {
