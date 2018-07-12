@@ -63,9 +63,9 @@ body {
       width: 100%; }
       #content #page #list table {
         width: 100%; }
-        #content #page #list table th.category {
+        #content #page #list table th.category_separator {
           position: relative;
-          height: 44px;
+          height: 12px;
           vertical-align: bottom;
           padding-left: 32px; }
         #content #page #list table td {

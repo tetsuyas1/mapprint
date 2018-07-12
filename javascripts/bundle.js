@@ -42023,7 +42023,7 @@ $(function () {
             if (_.isUndefined(marker))
                 marker = colors['その他'];
             if (category != lastCategory) {
-                $('#list table').append('<tr><th colspan="2" class="category"><icon class="awesome-number-marker awesome-number-marker-icon-' + marker + '"></icon>' + category + '</th></tr>');
+                $('#list table').append('<tr><th colspan="2" class="category_separator"></th></tr>');
                 lastCategory = category;
                 $('#list table').append('<tr>');
             }
